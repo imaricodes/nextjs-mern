@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 
 export const getNotes: RequestHandler = async (req, res, next) => {
     try {
+      //LEARN: The .exec() method is used to execute the Promise. Without it, the request would not return a promise.
       const notes = await NoteModel.find().exec();
       res.status(200).json(notes);
     } catch (error) {
@@ -12,6 +13,7 @@ export const getNotes: RequestHandler = async (req, res, next) => {
     }
   }
 
+  //QUESTION: Why no interface here? Because the params are not in the request body? -yes
   export const getNote: RequestHandler = async (req, res, next) => {
     const noteId = req.params.noteId;
 
@@ -60,3 +62,73 @@ export const getNotes: RequestHandler = async (req, res, next) => {
         next(error);
     }
   };
+
+  interface UpdateNoteParams{
+    noteId: string,
+  }
+
+interface UpdateNoteBody{
+  title?: string,
+  text: string,
+}
+
+//QUESTION: Still don't undertand, the four RequestHandler type parmeters... especially the fourth one. It says the fourth are the url query parameters. So, what are the params
+  export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBody, unknown> = async (req, res, next) => {
+
+    const noteId = req.params.noteId;
+    const newTitle = req.body.title;
+    const newText = req.body.text;
+
+    try {
+      if (!mongoose.isValidObjectId(noteId)) {
+        throw createHttpError(400, "Invalid note ID");
+      }
+
+      if(!newTitle) {
+        throw createHttpError(400, "New title is required");
+      }
+
+      const note = await NoteModel.findById(noteId).exec();
+
+      if(!note) {
+        throw createHttpError(404, "Note not found");
+      }
+
+      note.title = newTitle;
+      note.text = newText;
+
+      const updatedNote = await note.save();
+
+      res.status(200).json(updatedNote);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+
+  export const deleteNote: RequestHandler = async (req, res, next) => {
+
+    const noteId = req.params.noteId;
+ 
+    try {
+      if (!mongoose.isValidObjectId(noteId)) {
+        throw createHttpError(400, "Invalid note ID");
+      }
+
+      let note = await NoteModel.findById(noteId).exec();
+
+      if(!note) {
+        throw createHttpError(404, "Note not found");
+      }
+
+      note = await NoteModel.findByIdAndRemove(noteId).exec();
+
+      //LEARN:  The 204 No Content status code indicates that the server successfully processed the request and is not returning any content. It is used when the server does not wish to send any content in the response. This is unlike the 200 OK status code, which indicates that the request was successful and the server is sending back the requested resource. Example: res.status(201).json(newNote);
+
+      res.sendStatus(204);
+      
+    } catch (error) {
+      next(error);
+    }
+  }
