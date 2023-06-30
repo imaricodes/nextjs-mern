@@ -1,20 +1,33 @@
-import {useState} from 'react';
+import { useState, useEffect } from "react";
 
-import logo from './logo.svg';
-import './App.css';
-import { Button } from 'react-bootstrap';
+import "./App.css";
+
+import { Note } from "./models/noste";
 
 function App() {
+  const [notes, setNotes] = useState<Note[]>([]);
 
-  const [clickCount, setClickCount] = useState(0);
+  useEffect(() => {
+    async function loadNotes() {
+      try {
+        const response = await fetch("api/notes", {
+          method: "GET",
+        });
+        const notes = await response.json();
+        setNotes(notes);
+        
+      } catch (error) {
+        console.error(error);
+        alert(error)
+      }
+
+    }
+    loadNotes();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-    <Button onClick={()=> setClickCount(clickCount + 1)}>Clicked {clickCount} times</Button>
-  
-
-      </header>
+      {JSON.stringify(notes)}
     </div>
   );
 }
