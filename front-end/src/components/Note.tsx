@@ -1,8 +1,8 @@
-import styles from "../styles/Note.module.css"
-import { Card } from "react-bootstrap"
+import styles from "../styles/Note.module.css";
+import { Card } from "react-bootstrap";
 //LEARN: The 'as' keyword is used to cast a variable to a different type (name). The reason this is done here to avoid a naming conflict with the 'Note' component.
-import {Note as NoteModel} from "../models/note"
-import {formatDate} from "../utils/formatDate"
+import {Note as NoteModel} from "../models/note";
+import {formatDate} from "../utils/formatDate";
 
 interface NoteProps {
     note: NoteModel,
