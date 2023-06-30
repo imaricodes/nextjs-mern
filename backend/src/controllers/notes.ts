@@ -15,7 +15,8 @@ export const getNotes: RequestHandler = async (req, res, next) => {
 
   //QUESTION: Why no interface here? Because the params are not in the request body? -yes
   export const getNote: RequestHandler = async (req, res, next) => {
-    const noteId = req.params.noteId;
+    const {noteId, number} = req.params;
+    console.log({number})
 
     try {
         //LEARN: isValidObjectId is a static method of the mongoose class. It returns true if the value is a valid ObjectId, otherwise false. It does not throw an error if the value is not a valid ObjectId. It is used to validate that a value passed to a route parameter is a valid ObjectId. If it is not a valid ObjectId, then we throw an error.
