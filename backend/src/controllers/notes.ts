@@ -4,6 +4,7 @@ import createHttpError from "http-errors";
 import mongoose from "mongoose";
 
 export const getNotes: RequestHandler = async (req, res, next) => {
+  
     try {
       //LEARN: The .exec() method is used to execute the Promise. Without it, the request would not return a promise.
       const notes = await NoteModel.find().exec();
@@ -20,6 +21,8 @@ export const getNotes: RequestHandler = async (req, res, next) => {
 
     try {
         //LEARN: isValidObjectId is a static method of the mongoose class. It returns true if the value is a valid ObjectId, otherwise false. It does not throw an error if the value is not a valid ObjectId. It is used to validate that a value passed to a route parameter is a valid ObjectId. If it is not a valid ObjectId, then we throw an error.
+
+       
         if (!mongoose.isValidObjectId(noteId)) {
           throw createHttpError(400, "Invalid note ID");
         }
